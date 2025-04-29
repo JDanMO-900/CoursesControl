@@ -1,16 +1,22 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import AreaList from "@/views/AreaList.vue";
+import { createRouter, createWebHistory } from 'vue-router'
+import AreaListView from "@/views/AreaListView.vue";
+import GroupView from "@/views/GroupView.vue";
 
 const routes = [
   {
-    path: '/',
+    path: '/area-list',
     name: 'area-list',
-    component: AreaList
+    component: AreaListView
+  },
+      {
+    path: '/group-list',
+    name: 'group-list',
+    component: GroupView
   }
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes
 })
 

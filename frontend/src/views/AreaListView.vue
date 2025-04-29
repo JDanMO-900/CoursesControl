@@ -379,6 +379,7 @@ export default {
 
       try {
         this.isLoading = true;
+
         const response = await apiClient.post("/api/area/", this.edit_area);
         this.areas.push(response.data);
       } catch (error) {

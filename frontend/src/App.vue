@@ -1,6 +1,6 @@
 <template>
   <v-app>
-<!--    <TheMenu/>-->
+    <TheMenu/>
     <v-main>
       <router-view/>
     </v-main>
@@ -12,14 +12,14 @@
 </template>
 
 <script>
-// import TheMenu from "@/components/TheMenu.vue";
+import TheMenu from "@/components/TheMenu.vue";
 import TheFooter from "@/components/TheFooter.vue";
 
 export default {
   name: 'App',
   components: {
-    TheFooter
-    // TheMenu,
+    TheFooter,
+    TheMenu,
   },
 
   data: () => ({

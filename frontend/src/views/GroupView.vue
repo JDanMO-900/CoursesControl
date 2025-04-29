@@ -8,15 +8,23 @@
              prepend-icon="mdi-plus-circle"
 
       >
-        Agregar área
+        Agregar Grupo
       </v-btn>
 
+
+    </div>
+    <v-container>
+
+    </v-container>
+
+
+    <div>
 
     </div>
 
     <div class=" pa-6 mb-4">
       <v-card
-          title="Area"
+          title="Grupos"
           class="table-title"
           flat
       >
@@ -34,7 +42,7 @@
 
         <v-data-table
             :headers="headers"
-            :items="areas"
+            :items="groups"
             :search="search"
             class="my-table"
             sort-desc
@@ -69,7 +77,7 @@
       <v-card-title class="text-h6 text-white bg-cyan-darken-4 text-center">
 
 
-        <span>Agregar nueva área</span>
+        <span>Agregar nuevo grupo</span>
       </v-card-title>
       <v-card-text>
         <v-row dense>
@@ -85,13 +93,45 @@
                 :counter="50"
                 required
                 class="bg-white"
-                v-model="edit_area.name"
-                :errors="v$.edit_area.name.$errors.map(e => e.$message)"
+                v-model="edit_group.name"
+                :errors="v$.edit_group.name.$errors.map(e => e.$message)"
             ></v-text-field>
 
           </v-col>
+          <v-col
+              cols="12"
+              md="12"
+              sm="12">
+            <v-select
+                v-model="this.edit_group.area"
+                clearable
+                label="Seleccione el al que pertenece area"
+                :items="this.areas"
+                item-title="name"
+                item-value="name"
+            ></v-select>
+
+          </v-col>
+
+          <v-col
+              cols="12"
+              md="12"
+              sm="12">
+            <v-select
+                v-model="this.edit_group.internal"
+                clearable
+                label="Seleccione a que área pertenece"
+                :items="this.isInternal"
+                item-title="text"
+                item-value="value"
+
+            ></v-select>
+
+          </v-col>
+
 
         </v-row>
+
 
       </v-card-text>
 
@@ -118,7 +158,7 @@
             text="Guardar"
             variant="plain"
             append-icon="mdi-file-plus-outline"
-            @click="createArea()"
+            @click="createGroup()"
             :loading="isLoading"
         ></v-btn>
       </v-card-actions>
@@ -148,12 +188,12 @@
             <v-icon class="text-amber-darken-3">
               mdi-alert
             </v-icon>
-            ¿Está seguro de eliminar el área?
+            ¿Está seguro de eliminar el grupo?
 
 
           </v-card-title>
           <v-card-text class="text-center">
-            Esta acción eliminará el área <strong class="text-red"><u>{{ to_delete.name }}</u></strong>.
+            Esta acción eliminará el grupo <strong class="text-red"><u>{{ to_delete.name }}</u></strong>.
             <br/>
             <strong>El registro ya no será visible en la lista.</strong>
           </v-card-text>
@@ -206,7 +246,7 @@
       <v-card-title class="text-h6 text-white bg-cyan-darken-4 text-center">
 
         <v-icon size="20" class="mr-1">mdi-file-edit-outline</v-icon>
-        <span>Editar área</span>
+        <span>Editar grupo</span>
 
       </v-card-title>
       <v-card-text>
@@ -216,8 +256,47 @@
               md="12"
               sm="12"
           >
-            <v-text-field clearable label="Coloque el área" variant="solo-filled" :counter="50"
-                          required class="bg-white" v-model="edit_area.name"></v-text-field>
+            <v-text-field
+                clearable
+                label="Coloque el área"
+                variant="solo-filled"
+                :counter="50"
+                required
+                class="bg-white"
+                v-model="edit_group.name"
+                :errors="v$.edit_group.name.$errors.map(e => e.$message)"
+            ></v-text-field>
+
+          </v-col>
+
+          <v-col
+              cols="12"
+              md="12"
+              sm="12">
+            <v-select
+                v-model="this.edit_group.area"
+                clearable
+                label="Seleccione el al que pertenece area"
+                :items="this.areas"
+                item-title="name"
+                item-value="name"
+            ></v-select>
+
+          </v-col>
+
+          <v-col
+              cols="12"
+              md="12"
+              sm="12">
+            <v-select
+                v-model="this.edit_group.internal"
+                clearable
+                label="Seleccione a que área pertenece"
+                :items="this.isInternal"
+                item-title="text"
+                item-value="value"
+
+            ></v-select>
 
           </v-col>
 
@@ -249,7 +328,7 @@
             variant="plain"
             append-icon="mdi-pencil-plus-outline"
             :loading="isLoading"
-            @click="updateArea(this.to_edit)"
+            @click="updateGroup(this.to_edit)"
 
         ></v-btn>
       </v-card-actions>
@@ -306,15 +385,23 @@ export default {
   data() {
     return {
       areas: [],
+      groups: [],
+      isInternal: [{"text": "Área Interna", value: true},
+        {"text": "Área Externa", value: false}],
+
       v$: null,
       error_message: "",
 
       editedIndex: -1,
-      edit_area: {
-        name: ""
+      edit_group: {
+        name: "",
+        area: "",
+        internal: null
       },
       default_item: {
-        name: ""
+        name: "",
+        area: "",
+        internal: null
       }
       ,
 
@@ -332,22 +419,22 @@ export default {
       search: '',
       headers: [
         {
-          title: 'Nombre del área',
+          title: 'Nombre del grupo',
           align: 'start',
           sortable: true,
           value: 'name',
 
         },
-
+        {title: "Área", value: "area", sortable: true,},
+        {title: "Área interna", value: "internal_display", sortable: true,},
         {title: "Actions", value: "actions", sortable: true,}
-
       ],
 
     }
   },
   validations() {
     return {
-      edit_area: {
+      edit_group: {
         name: {
           required: helpers.withMessage("El campo nombre es obligatorio", required),
           maxLength: helpers.withMessage("Máximo 50 caracteres", maxLength(50)),
@@ -359,28 +446,67 @@ export default {
   ,
 
   methods: {
-
     async fetchAreas() {
       try {
         const response = await apiClient.get("/api/area/");
-        this.areas = response.data;
+
+        await new Promise(
+            (resolve) => {
+              requestAnimationFrame(() => {
+                this.areas = response.data;
+                resolve();
+              });
+            }
+        )
+
+        await this.$nextTick();
+
       } catch (error) {
         console.error("Error fetching areas:", error);
       }
     },
-    async createArea() {
+
+    async fetchGroups() {
+      try {
+        const response = await apiClient.get("/api/group/");
+
+
+        const mappedGroups = response.data.map(
+            group => ({
+              ...group,
+              internal_display: group.internal ? "Área interna" : "Área externa"
+            })
+        );
+
+        await new Promise((resolve) => {
+          requestAnimationFrame(() => {
+            this.groups = mappedGroups;
+            resolve();
+          })
+        });
+
+        await this.$nextTick();
+
+      } catch (error) {
+        console.error("Error fetching groups:", error);
+      }
+    },
+
+    async createGroup() {
       this.v$.$touch();
 
       if (this.v$.$invalid) {
-        this.error_message = (this.v$.edit_area.name.$errors[0].$message);
+        this.error_message = (this.v$.edit_group.name.$errors[0].$message);
         this.alertDialog = true;
         return;
       }
 
       try {
         this.isLoading = true;
-        const response = await apiClient.post("/api/area/", this.edit_area);
-        this.areas.push(response.data);
+
+
+        const response = await apiClient.post("/api/group/", this.edit_group);
+        this.groups.push(response.data);
       } catch (error) {
         if (error.response && error.response.data) {
           const errors = error.response.data;
@@ -395,7 +521,10 @@ export default {
 
       } finally {
         await this.fetchAreas();
-        this.edit_area.name = "";
+        await this.fetchGroups();
+        this.edit_group.name = "";
+        this.edit_group.area = "";
+        this.edit_group.internal = null;
         await new Promise(resolve => setTimeout(resolve, 500));
         this.isLoading = false;
         this.addDialog = false;
@@ -404,19 +533,23 @@ export default {
     },
 
 
-    async updateArea(area) {
+    async updateGroup(group) {
 
       if (this.editedIndex > -1) {
         const edited = Object.assign(
-            this.areas[this.editedIndex],
-            this.edit_area
+            this.groups[this.editedIndex],
+            this.edit_group
+
         );
+
         try {
-          const response = await apiClient.put(`/api/area/${edited.id}/`, edited);
-          const index = this.areas.findIndex(a => a.id === area.id);
+          const response = await apiClient.put(`/api/group/${edited.id}/`, edited);
+          console.log(response.data)
+          const index = this.groups.findIndex(g => g.id === group.id);
           this.isLoading = true;
           if (index !== -1) {
-            this.areas[index] = response.data;
+            console.log(response.data)
+            this.groups[index] = response.data;
           }
 
 
@@ -434,7 +567,7 @@ export default {
           }
 
         } finally {
-          await this.fetchAreas();
+          await this.fetchGroups();
           await new Promise(resolve => setTimeout(resolve, 500));
           this.isLoading = false;
           this.editDialog = false;
@@ -442,13 +575,12 @@ export default {
         }
       }
 
-
     },
 
-    async deleteArea(area) {
+    async deleteArea(group) {
       try {
-        await apiClient.delete(`/api/area/${area.id}/`);
-        this.areas = this.areas.filter(areaToDelete => areaToDelete.id !== area.id);
+        await apiClient.delete(`/api/group/${group.id}/`);
+        this.areas = this.areas.filter(areaToDelete => areaToDelete.id !== group.id);
         this.isLoading = true;
 
       } catch (error) {
@@ -463,7 +595,7 @@ export default {
           this.error_message = ("unexpected error: " + error)
         }
       } finally {
-        await this.fetchAreas()
+        await this.fetchGroups()
         await new Promise(resolve => setTimeout(resolve, 500));
         this.isLoading = false;
 
@@ -472,7 +604,7 @@ export default {
     },
 
     openAddDialog() {
-      this.edit_area = Object.assign({}, this.default_item);
+      this.edit_group = Object.assign({}, this.default_item);
       this.addDialog = true;
     },
     openDeleteDialog(to_delete) {
@@ -481,9 +613,9 @@ export default {
     },
     openEditDialog(item) {
       // editedIndex guarda el id del arreglo creado localmente
-      this.editedIndex = this.areas.indexOf(item);
+      this.editedIndex = this.groups.indexOf(item);
       // En este caso el id del arreglo local es el mismo que el id de la base de datos
-      this.edit_area = Object.assign({}, item);
+      this.edit_group = Object.assign({}, item);
       this.editDialog = true;
     },
 
@@ -494,7 +626,14 @@ export default {
   },
   mounted() {
     this.fetchAreas();
+    this.fetchGroups();
+
   },
+  computed: {
+    isInternalDisplay() {
+      return this.edit_group.internal ? "Pertenece a Entrenamiento" : "Área Externa"
+    }
+  }
 
 
 }
@@ -532,7 +671,6 @@ export default {
   border: 2px dashed #ffffff !important;;
   background-color: #003049;
   color: white;
-
 
 }
 
