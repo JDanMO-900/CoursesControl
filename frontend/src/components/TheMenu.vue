@@ -27,6 +27,14 @@
       </RouterLink>
     </div>
 
+    <div class="menu-options mt-3 text-center">
+      <RouterLink to="/course-list" class="d-flex flex-column align-center pt-2 pb-2 p-1">
+        <v-icon icon="mdi-account-check" size="20"></v-icon>
+        <span>Lista de Cursos</span>
+      </RouterLink>
+    </div>
+
+
   </v-navigation-drawer>
 
 
